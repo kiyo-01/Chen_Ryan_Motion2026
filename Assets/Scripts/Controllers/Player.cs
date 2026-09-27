@@ -151,6 +151,19 @@ public class Player : MonoBehaviour
         else
         {
             accelDirection = Vector3.zero;
+
+            //use accel logic on deceleration when no keys are pressed
+            if (currentVelocity.magnitude > 0)
+            {
+                currentVelocity -= currentVelocity.normalized * decel * Time.deltaTime;
+
+                //if the current velocity is less than the deceleration amount, set it to zero
+                if (currentVelocity.magnitude < decel * Time.deltaTime)
+                {
+                    currentVelocity = Vector3.zero;
+                }
+            }
+        
         }
         currentVelocity += accelDirection.normalized * currentAccel * Time.deltaTime;
         
