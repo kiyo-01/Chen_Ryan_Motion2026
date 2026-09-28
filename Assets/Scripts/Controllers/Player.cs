@@ -30,12 +30,28 @@ public class Player : MonoBehaviour
     public float decelTime;
     public float decel;
 
+
+    //journal 4
+    public int noOfPoints;
+    private float circlePointsAngles;
+    public float circleRadius;
+
     void Start()
     {
         currentAccel = maxSpeed / accelTime;
         decel = maxSpeed / decelTime;
 
+        if (noOfPoints != 0)
+        {
+            circlePointsAngles = 360f / noOfPoints;
+        }
+        else
+        {
+            circlePointsAngles = 0f;
+        }
     }
+
+
     
     void Update()
     {   
@@ -62,6 +78,8 @@ public class Player : MonoBehaviour
         DetectAsteroids(maxRange, asteroidTransforms);
 
         PlayerMovement();
+
+        PlayerRadar(noOfPoints, circlePointsAngles);
     }
 
     public void SpawnBombAtOffset()
@@ -173,8 +191,6 @@ public class Player : MonoBehaviour
             currentVelocity = currentVelocity.normalized * maxSpeed;
         }
         
-        
-        
         //Vector3 speedCap = new Vector3(maxSpeed, maxSpeed, maxSpeed);
 
         //if (currentVelocity.x >= speedCap.x)
@@ -195,5 +211,19 @@ public class Player : MonoBehaviour
         //}
 
         transform.position += currentVelocity * Time.deltaTime;
+    }
+
+    public void PlayerRadar(int points, float angles) 
+    {
+        float anglesInRadians = angles * Mathf.Deg2Rad;
+        
+        
+        
+        List<float> circlePoints = new List<float>();
+        for (int i = 0; i > points - 1; i++)
+        {
+            float endPointX = Mathf.Cos(anglesInRadians * i);
+            float endPointY = Mathf.Sin(anglesInRadians * i);
+        }
     }
 }
