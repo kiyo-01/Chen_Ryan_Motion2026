@@ -34,6 +34,8 @@ public class Player : MonoBehaviour
     //journal 4
     public int noOfPoints;
     public float circleRadius;
+    public int noOfPowerups;
+    public GameObject powerupPrefab;
 
     void Start()
     {
@@ -71,6 +73,11 @@ public class Player : MonoBehaviour
         PlayerMovement();
 
         PlayerRadar(circleRadius, noOfPoints);
+
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
+            SpawnPowerups(circleRadius, noOfPowerups);
+        }
     }
 
     public void SpawnBombAtOffset()
@@ -218,7 +225,7 @@ public class Player : MonoBehaviour
                 radarColor = Color.red;
             }
         }
-        //calculate the angle steps in radians (dunno what happened but 2pi works better)
+        //calculate the angle steps in radians
         float angleSteps = (2f * Mathf.PI) / circlePoints;
 
         //draw a "circle" with circlePoints number of points around the player
@@ -241,7 +248,29 @@ public class Player : MonoBehaviour
             //draw the seg
             Debug.DrawLine(currentPoint, nextPoint, radarColor);
         }
+    }
 
+    public void SpawnPowerups (float radius, int numberOfPowerups)
+    {
+        //calc the angle spread between powerups in radians
+        float angleStep = (2f * Mathf.PI) / numberOfPowerups;
 
+        //loop to spawn specified number of powerups
+        for (int i = 0; i < numberOfPowerups; i++)
+        {
+            //angle of current powerup
+            float currentAngle = angleStep * i;
+
+            //point on circle trig to calc coord of powerup
+            float spawnX = Mathf.Cos(currentAngle) * radius;
+            float spawnY = Mathf.Sin(currentAngle) * radius;
+
+            //make it move with player
+            Vector3 spawnPos = transform.position + new Vector3(spawnX, spawnY, 0f);
+
+            //spawn prefab aat spawnPos
+            Instantiate(powerupPrefab, spawnPos, Quaternion.identity);
+        }
     }
 }
+    
