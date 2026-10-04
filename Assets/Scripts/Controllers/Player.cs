@@ -33,7 +33,6 @@ public class Player : MonoBehaviour
 
     //journal 4
     public int noOfPoints;
-    private float circlePointsAngles;
     public float circleRadius;
 
     void Start()
@@ -41,14 +40,6 @@ public class Player : MonoBehaviour
         currentAccel = maxSpeed / accelTime;
         decel = maxSpeed / decelTime;
 
-        if (noOfPoints != 0)
-        {
-            circlePointsAngles = 360f / noOfPoints;
-        }
-        else
-        {
-            circlePointsAngles = 0f;
-        }
     }
 
 
@@ -79,7 +70,7 @@ public class Player : MonoBehaviour
 
         PlayerMovement();
 
-        PlayerRadar(noOfPoints, circlePointsAngles);
+        PlayerRadar(circleRadius, noOfPoints);
     }
 
     public void SpawnBombAtOffset()
@@ -213,17 +204,44 @@ public class Player : MonoBehaviour
         transform.position += currentVelocity * Time.deltaTime;
     }
 
-    public void PlayerRadar(int points, float angles) 
+    public void PlayerRadar(float radius, int circlePoints) 
     {
-        float anglesInRadians = angles * Mathf.Deg2Rad;
-        
-        
-        
-        List<float> circlePoints = new List<float>();
-        for (int i = 0; i > points - 1; i++)
+        //color based on enemy distance
+        Color radarColor = Color.green;
+
+        //if enemy exists, check distance to enemy and change color if within circle radius
+        if (enemyTransform != null)
         {
-            float endPointX = Mathf.Cos(anglesInRadians * i);
-            float endPointY = Mathf.Sin(anglesInRadians * i);
+            float distanceToEnemy = Vector3.Distance(transform.position, enemyTransform.position);
+            if (distanceToEnemy <= circleRadius)
+            {
+                radarColor = Color.red;
+            }
         }
+        //calculate the angle steps in radians (dunno what happened but 2pi works better)
+        float angleSteps = (2f * Mathf.PI) / circlePoints;
+
+        //draw a "circle" with circlePoints number of points around the player
+        for (int i = 0; i < circlePoints; i++)
+        {
+            //get angles for this point and the next
+            float currentAngle = angleSteps * i;
+            float nextAngle = angleSteps * (i + 1);
+
+            //calc current point with trig, scale by radius, offset by player position
+            float currentX = Mathf.Cos(currentAngle) * radius;
+            float currentY = Mathf.Sin(currentAngle) * radius;
+            Vector3 currentPoint = transform.position + new Vector3(currentX, currentY, 0f);
+
+            //calc next point
+            float nextX = Mathf.Cos(nextAngle) * radius;
+            float nextY = Mathf.Sin(nextAngle) * radius;
+            Vector3 nextPoint = transform.position + new Vector3(nextX, nextY, 0f);
+
+            //draw the seg
+            Debug.DrawLine(currentPoint, nextPoint, radarColor);
+        }
+
+
     }
 }
