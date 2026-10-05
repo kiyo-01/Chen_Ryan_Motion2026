@@ -1,0 +1,20 @@
+using UnityEngine;
+
+public class AngleComparison : MonoBehaviour
+{
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        Vector3 facingDirection = transform.up;
+        float facingAngle = TestAngles.VectorToAngle(facingDirection);
+
+        Debug.Log(facingAngle);
+        Debug.Log(transform.eulerAngles.z);
+    }
+}
