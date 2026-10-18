@@ -4,11 +4,19 @@ public class BlackHole : MonoBehaviour
 {
     //target
     public Player player;
+    public Transform gravVisual;
+    public Transform ehVisual;
 
     //black hole settings   
     public float pullRadius = 10f;
     public float maxPullForce = 5f;
     public float eventHorizon = 0.5f;
+
+    void Start()
+    {
+        gravVisual.localScale = new Vector3(pullRadius, pullRadius, 1f);
+        ehVisual.localScale = new Vector3(eventHorizon, eventHorizon, 1f);
+    }
 
     void Update()
     {
