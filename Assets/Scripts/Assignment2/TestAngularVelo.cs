@@ -10,5 +10,7 @@ public class TestAngularVelo : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         rb.angularVelocity = 180f;
+
+        rb.angularDamping = 5f;
     }
 }
