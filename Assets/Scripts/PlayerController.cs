@@ -8,10 +8,16 @@ public class PlayerController : MonoBehaviour
 {
     public Rigidbody2D rb;
     private bool facingLeft = true;
-    
+    //horizontal move stuff
     public float maxSpeed = 5f;
     public float accelTime = 0.5f;
     private float accel;
+    //vertical jump stuff
+    public float apexJHeight = 4f;
+    public float apexJTime = 0.4f;
+    private float initialJVelo = 20f;
+    private float gravity;
+    private bool wasJTriggered = false;
 
     public float groundCheckDistance = 1f;
     public LayerMask groundLayer;
@@ -26,10 +32,11 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         accel = maxSpeed / accelTime;
+        gravity = -2 * apexJHeight / (apexJTime * apexJTime);
+        initialJVelo = 2 * apexJHeight / apexJTime;
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         //The input from the player needs to be determined and then passed in the to the MovementUpdate which should
         //manage the actual movement of the character.
@@ -52,8 +59,25 @@ public class PlayerController : MonoBehaviour
         }
 
         MovementUpdate(playerInput);
+    }
 
-        
+    // Update is called once per frame
+    void Update()
+    {
+        if (Keyboard.current.wKey.wasPressedThisFrame && IsGrounded() || Keyboard.current.spaceKey.wasPressedThisFrame && IsGrounded())
+        {
+            wasJTriggered = true;
+        }
+
+        if (Keyboard.current.sKey.wasPressedThisFrame)
+        {
+            gravity *= 2;
+        } 
+        else if (Keyboard.current.sKey.wasReleasedThisFrame)
+            {
+                gravity /= 2;
+            }
+
     }
 
     private void MovementUpdate(Vector2 playerInput)
@@ -63,14 +87,34 @@ public class PlayerController : MonoBehaviour
         if (playerInput.x != 0)
         {
             //accelerate the player in the direction of the input
-            newVelocity += playerInput.x * accel * Time.deltaTime * Vector2.right;
+            newVelocity.x += playerInput.x * accel * Time.deltaTime;
             newVelocity.x = Mathf.Clamp(newVelocity.x, -maxSpeed, maxSpeed);
         }
         else
         {
             //if the player is not pressing any input, slow down the player to a stop
-            newVelocity = Vector2.zero;
+            newVelocity.x = 0;
         }
+
+        //if (Keyboard.current.wKey.wasPressedThisFrame && IsGrounded())
+        //{
+        //    newVelocity.y = initialJVelo;
+        //}
+
+        //apply the gravity that we calc over time
+
+        if (IsGrounded() != true)
+        {
+            newVelocity.y += gravity * Time.deltaTime;
+        }
+        //if the player provides the input for the jump, give initial jump velocity
+
+        if (wasJTriggered)
+        {
+            newVelocity.y = initialJVelo;
+            wasJTriggered = false;
+        }
+        
         rb.linearVelocity = newVelocity;
     }
 
@@ -84,8 +128,7 @@ public class PlayerController : MonoBehaviour
     {
         //https://youtu.be/xH-x7YFS7vU?si=Vbr8rG3lbHd7Oukc
         //found a video for how to use layermask
-        RaycastHit2D ground = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
-        return ground.collider != null;
+        return Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
     }
 
     public FacingDirection GetFacingDirection()

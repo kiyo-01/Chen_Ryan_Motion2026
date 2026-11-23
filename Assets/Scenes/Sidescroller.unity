@@ -1755,7 +1755,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
   maxSpeed: 5
-  accelTime: 0.5
+  accelTime: 0.1
+  apexJHeight: 2.5
+  apexJTime: 0.7
   groundCheckDistance: 1
   groundLayer:
     serializedVersion: 2
