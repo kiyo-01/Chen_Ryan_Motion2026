@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 1054579210}
   - component: {fileID: 1054579209}
   - component: {fileID: 1054579211}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1756,6 +1756,10 @@ MonoBehaviour:
   rb: {fileID: 0}
   maxSpeed: 5
   accelTime: 0.5
+  groundCheckDistance: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &1433354315
 Transform:
   m_ObjectHideFlags: 0
